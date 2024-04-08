@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-from routes.auth import create_user, login, add_service, update_user, delete_user, get_user, create_service, update_service, delete_service, get_service
+from routes.auth import login
+from data.services import create_service, update_service, delete_service, get_service
+from data.users import create_user, update_user, delete_user, get_user
 
 app = Flask(__name__)
 
