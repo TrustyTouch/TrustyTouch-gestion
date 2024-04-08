@@ -8,9 +8,9 @@ from data import users, services
 def create_service():
     data = request.get_json()
     service_name = data.get('service_name')
-    provider = data.get('provider')
+    createur = data.get('createur')
     # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'provider': provider}
+    services[service_name] = {'createur': createur}
     return jsonify({'message': 'Service ajouté avec succès'})
 
 # Route pour la modification des services proposés par les prestataires
@@ -18,27 +18,27 @@ def create_service():
 def update_service():
     data = request.get_json()
     service_name = data.get('service_name')
-    provider = data.get('provider')
+    createur = data.get('createur')
     # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'provider': provider}
-    return jsonify({'message': 'Service ajouté avec succès'})
+    services[service_name] = {'createur': createur}
+    return jsonify({'message': 'Service modifié avec succès'})
 
 # Route pour la suppression des services proposés par les prestataires
 @jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
 def delete_service():
     data = request.get_json()
     service_name = data.get('service_name')
-    provider = data.get('provider')
+    createur = data.get('createur')
     # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'provider': provider}
-    return jsonify({'message': 'Service ajouté avec succès'})
+    services[service_name] = {'createur': createur}
+    return jsonify({'message': 'Service supprimé avec succès'})
 
 # Route pour la récupération des services proposés par les prestataires
 @jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
 def get_service():
     data = request.get_json()
     service_name = data.get('service_name')
-    provider = data.get('provider')
+    createur = data.get('createur')
     # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'provider': provider}
-    return jsonify({'message': 'Service ajouté avec succès'})
+    services[service_name] = {'createur': createur}
+    return jsonify({'message': 'Service trouvé avec succès'})

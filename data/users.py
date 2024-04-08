@@ -8,8 +8,9 @@ def create_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
+    role = data.get('role')
     # Stocker les informations utilisateur dans une base de données
-    users[username] = {'password': password, 'services': []}
+    users[username] = {'password': password, 'role': role}
     return jsonify({'message': 'Compte utilisateur créé avec succès'})
 
 # Route pour la modification d'un compte utilisateur
@@ -18,8 +19,8 @@ def update_user():
     username = data.get('username')
     password = data.get('password')
     # Stocker les informations utilisateur dans une base de données
-    users[username] = {'password': password, 'services': []}
-    return jsonify({'message': 'Compte utilisateur créé avec succès'})
+    users[username] = {'password': password}
+    return jsonify({'message': 'Utilisateur modifié avec succès'})
 
 # Route pour la suppression d'un compte utilisateur
 def delete_user():
@@ -27,14 +28,13 @@ def delete_user():
     username = data.get('username')
     password = data.get('password')
     # Stocker les informations utilisateur dans une base de données
-    users[username] = {'password': password, 'services': []}
-    return jsonify({'message': 'Compte utilisateur créé avec succès'})
+    users[username] = {'password': password}
+    return jsonify({'message': 'Utilisateur supprimé avec succès'})
 
 # Route pour la récupération d'un compte utilisateur
 def get_user():
     data = request.get_json()
     username = data.get('username')
-    password = data.get('password')
     # Stocker les informations utilisateur dans une base de données
-    users[username] = {'password': password, 'services': []}
-    return jsonify({'message': 'Compte utilisateur créé avec succès'})
+    users[username] = {}
+    return jsonify({'message': 'Utilisateur trouvé avec succès'})
