@@ -9,15 +9,6 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'  # Changez ceci en une clé secrète forte dans un environnement de production
 jwt = JWTManager(app)
 
-# Route pour la création d'un compte utilisateur
-def create_account():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
-    users[username] = {'password': password, 'services': []}
-    return jsonify({'message': 'Compte utilisateur créé avec succès'})
-
 # Route pour la connexion d'un utilisateur
 def login():
     data = request.get_json()
@@ -30,18 +21,75 @@ def login():
     else:
         return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'})
 
-# Route pour la gestion des informations utilisateur
-@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
-def user_info():
-    current_user = get_jwt_identity()
-    if current_user in users:
-        return jsonify(users[current_user])
-    else:
-        return jsonify({'message': 'Utilisateur non trouvé'})
+# Route pour la création d'un compte utilisateur
+def create_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    users[username] = {'password': password, 'services': []}
+    return jsonify({'message': 'Compte utilisateur créé avec succès'})
 
-# Route pour la gestion des services proposés par les prestataires
+# Route pour la modification d'un compte utilisateur
+def update_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    users[username] = {'password': password, 'services': []}
+    return jsonify({'message': 'Compte utilisateur créé avec succès'})
+
+# Route pour la suppression d'un compte utilisateur
+def delete_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    users[username] = {'password': password, 'services': []}
+    return jsonify({'message': 'Compte utilisateur créé avec succès'})
+
+# Route pour la récupération d'un compte utilisateur
+def get_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    users[username] = {'password': password, 'services': []}
+    return jsonify({'message': 'Compte utilisateur créé avec succès'})
+
+# Route pour la création des services proposés par les prestataires
 @jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
-def add_service():
+def create_service():
+    data = request.get_json()
+    service_name = data.get('service_name')
+    provider = data.get('provider')
+    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    services[service_name] = {'provider': provider}
+    return jsonify({'message': 'Service ajouté avec succès'})
+
+# Route pour la modification des services proposés par les prestataires
+@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
+def update_service():
+    data = request.get_json()
+    service_name = data.get('service_name')
+    provider = data.get('provider')
+    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    services[service_name] = {'provider': provider}
+    return jsonify({'message': 'Service ajouté avec succès'})
+
+# Route pour la suppression des services proposés par les prestataires
+@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
+def delete_service():
+    data = request.get_json()
+    service_name = data.get('service_name')
+    provider = data.get('provider')
+    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    services[service_name] = {'provider': provider}
+    return jsonify({'message': 'Service ajouté avec succès'})
+
+# Route pour la récupération des services proposés par les prestataires
+@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
+def get_service():
     data = request.get_json()
     service_name = data.get('service_name')
     provider = data.get('provider')
