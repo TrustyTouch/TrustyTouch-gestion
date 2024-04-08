@@ -26,7 +26,7 @@ def create_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    # Stocker les informations utilisateur dans une base de données
     users[username] = {'password': password, 'services': []}
     return jsonify({'message': 'Compte utilisateur créé avec succès'})
 
@@ -35,7 +35,7 @@ def update_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    # Stocker les informations utilisateur dans une base de données
     users[username] = {'password': password, 'services': []}
     return jsonify({'message': 'Compte utilisateur créé avec succès'})
 
@@ -44,7 +44,7 @@ def delete_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    # Stocker les informations utilisateur dans une base de données
     users[username] = {'password': password, 'services': []}
     return jsonify({'message': 'Compte utilisateur créé avec succès'})
 
@@ -53,7 +53,7 @@ def get_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    # Stocker les informations utilisateur dans la mémoire ou dans une base de données
+    # Stocker les informations utilisateur dans une base de données
     users[username] = {'password': password, 'services': []}
     return jsonify({'message': 'Compte utilisateur créé avec succès'})
 
@@ -63,7 +63,7 @@ def create_service():
     data = request.get_json()
     service_name = data.get('service_name')
     provider = data.get('provider')
-    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    # Stocker les informations sur le service dans une base de données
     services[service_name] = {'provider': provider}
     return jsonify({'message': 'Service ajouté avec succès'})
 
@@ -73,7 +73,7 @@ def update_service():
     data = request.get_json()
     service_name = data.get('service_name')
     provider = data.get('provider')
-    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    # Stocker les informations sur le service dans une base de données
     services[service_name] = {'provider': provider}
     return jsonify({'message': 'Service ajouté avec succès'})
 
@@ -83,7 +83,7 @@ def delete_service():
     data = request.get_json()
     service_name = data.get('service_name')
     provider = data.get('provider')
-    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    # Stocker les informations sur le service dans une base de données
     services[service_name] = {'provider': provider}
     return jsonify({'message': 'Service ajouté avec succès'})
 
@@ -93,7 +93,7 @@ def get_service():
     data = request.get_json()
     service_name = data.get('service_name')
     provider = data.get('provider')
-    # Stocker les informations sur le service dans la mémoire ou dans une base de données
+    # Stocker les informations sur le service dans une base de données
     services[service_name] = {'provider': provider}
     return jsonify({'message': 'Service ajouté avec succès'})
 
