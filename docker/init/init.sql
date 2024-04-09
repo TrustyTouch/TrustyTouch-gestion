@@ -1,5 +1,21 @@
+CREATE TABLE roles (
+    id serial PRIMARY KEY,
+    nom_role VARCHAR(50)
+);
+
+INSERT INTO roles (nom_role) VALUES 
+    ('demandeur'),
+    ('prestataire'),
+    ('administrateur');
+
+CREATE TABLE categories (
+    id serial PRIMARY KEY,
+    nom VARCHAR(50),
+    image VARCHAR(100)
+);
+
 CREATE TABLE utilisateurs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id serial PRIMARY KEY,
     nom VARCHAR(50),
     mot_de_passe VARCHAR(50),
     id_roles INT, -- Référence à l'ID du rôle de l'utilisateur
@@ -8,7 +24,7 @@ CREATE TABLE utilisateurs (
 );
 
 CREATE TABLE services (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id serial PRIMARY KEY,
     titre VARCHAR(100),
     description TEXT,
     id_createur INT,
@@ -19,14 +35,8 @@ CREATE TABLE services (
     images TEXT
 );
 
-CREATE TABLE categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(50),
-    image VARCHAR(100)
-);
-
 CREATE TABLE notations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id serial PRIMARY KEY,
     id_user INT,
     FOREIGN KEY (id_user) REFERENCES utilisateurs(id),
     id_service INT,
@@ -35,7 +45,7 @@ CREATE TABLE notations (
 );
 
 CREATE TABLE etapes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id serial PRIMARY KEY,
     id_service INT,
     id_demandeur INT,
     statut INT,
@@ -44,19 +54,9 @@ CREATE TABLE etapes (
 );
 
 CREATE TABLE parrainage (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id serial PRIMARY KEY,
     id_paraineur INT,
     FOREIGN KEY (id_paraineur) REFERENCES utilisateurs(id),
     id_paraine INT,
     FOREIGN KEY (id_paraine) REFERENCES utilisateurs(id)
 );
-
-CREATE TABLE roles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom_role VARCHAR(50)
-);
-
-INSERT INTO roles (nom_role) VALUES 
-    ('demandeur'),
-    ('prestataire'),
-    ('administrateur');

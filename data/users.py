@@ -37,4 +37,4 @@ def get_user():
     username = data.get('username')
     # Stocker les informations utilisateur dans une base de données
     users[username] = {}
-    return jsonify({'message': 'Utilisateur trouvé avec succès'})
+    return jsonify(users)

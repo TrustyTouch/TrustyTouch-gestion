@@ -1,21 +1,14 @@
-version: '3.8'
-
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - .:/app
     ports:
       - "5000:5000"
     depends_on:
       - db
     environment:
-      - FLASK_APP=src/app.py
       - DATABASE_URL=postgresql://user:password@db:5432/dbname
-    command: flask run --host=0.0.0.0
-
   db:
     container_name: postgres_db
     restart: unless-stopped
@@ -23,10 +16,12 @@ services:
     ports: 
       - 5432:5432
     environment:
+      - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     volumes: 
       - "./docker/init:/docker-entrypoint-initdb.d"
-      - "./docker/data:/var/lib/postgresql/data"
+      - "postgres_db_data:/var/lib/postgresql/data"
 
 volumes:
-  postgres_data:
+  postgres_db_data:
+    external: true
