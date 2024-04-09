@@ -1,26 +1,28 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    depends_on:
-      - db
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/dbname
   db:
     container_name: postgres_db
     restart: unless-stopped
     image: postgres
     ports: 
-      - 5432:5432
+      - "5432:5432"
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     volumes: 
-      - "./docker/init:/docker-entrypoint-initdb.d"
+      - "./docker/init:/docker-entrypoint-initdb.d:ro"
       - "postgres_db_data:/var/lib/postgresql/data"
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DATABASE_URL=postgresql://user:password@db:5432/dbname
 
 volumes:
   postgres_db_data:

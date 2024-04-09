@@ -1,3 +1,6 @@
+import sys
+from signal import signal, SIGTERM, SIGINT
+
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
@@ -28,6 +31,11 @@ app.add_url_rule('/update_service', view_func=update_service, methods=['PUT'])
 app.add_url_rule('/delete_service', view_func=delete_service, methods=['DELETE'])
 
 app.add_url_rule('/get_service', view_func=get_service, methods=['GET'])
+
+def handle_signal(*args, **kwargs):
+    sys.exit(0)
+signal(SIGTERM, handle_signal)
+# signal(SIGINT, handle_signal)
 
 if __name__ == '__main__':
     app.run(debug=True)
