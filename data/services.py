@@ -1,7 +1,18 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
+import psycopg2
+
 from data import users, services
+
+# Configuration de la connexion à la base de données
+conn = psycopg2.connect(
+    dbname="postgres",
+    user="postgres",
+    password="postgres",
+    host="localhost",
+    port="5432"
+)
 
 # Route pour la création des services proposés par les prestataires
 @jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route

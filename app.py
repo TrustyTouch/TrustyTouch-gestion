@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 
 from routes.auth import login
 from data.services import create_service, update_service, delete_service, get_service
-from data.users import create_user, update_user, delete_user, get_user
+from data.users import create_user, update_user, delete_user, get_users, get_user
 
 app = Flask(__name__)
 
@@ -22,7 +22,9 @@ app.add_url_rule('/update_user', view_func=update_user, methods=['PUT'])
 
 app.add_url_rule('/delete_user', view_func=delete_user, methods=['DELETE'])
 
-app.add_url_rule('/get_user', view_func=get_user, methods=['GET'])
+app.add_url_rule('/get_users', view_func=get_users, methods=['GET'])
+
+app.add_url_rule('/get_user=', view_func=get_user, methods=['GET'])
 
 app.add_url_rule('/create_service', view_func=create_service, methods=['POST'])
 
