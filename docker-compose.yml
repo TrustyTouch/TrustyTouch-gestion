@@ -23,6 +23,9 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/dbname
+      - FLASK_DEBUG=1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   postgres_db_data:

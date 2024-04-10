@@ -3,14 +3,12 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 
 import psycopg2
 
-from data import users, services
-
 # Configuration de la connexion à la base de données
 conn = psycopg2.connect(
     dbname="postgres",
     user="postgres",
     password="postgres",
-    host="localhost",
+    host="host.docker.internal",
     port="5432"
 )
 
@@ -23,17 +21,17 @@ def create_service():
     # Créer un nouvel enregistrement de service dans la base de données
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO services (nom) VALUES (%s) RETURNING id", (nom))
+        cur.execute("INSERT INTO services (titre) VALUES (%s) RETURNING id", (nom,))
         service_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': service_id, 'nom': nom}), 201
+        return jsonify({'id': id, 'nom': nom}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
 
 # Route pour la modification d'un service proposé par un prestataire par l'ID
-def update_service(service_id):
+def update_service(id):
     # Récupérer les données mises à jour du service à partir de la requête JSON
     data = request.json
     nom = data.get('nom')
@@ -41,7 +39,7 @@ def update_service(service_id):
     # Mettre à jour l'enregistrement de service dans la base de données
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE services SET nom = %s WHERE id = %s", (nom, service_id))
+        cur.execute("UPDATE services SET nom = %s WHERE id = %s", (nom, id))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Service mis à jour avec succès'}), 200
@@ -50,11 +48,11 @@ def update_service(service_id):
         return jsonify({'error': str(e)}), 500
 
 # Route pour la suppression d'un service proposé par un prestataire par l'ID
-def delete_service(service_id):
+def delete_service(id):
     # Supprimer l'enregistrement de service de la base de données
     try:
         cur = conn.cursor()
-        cur.execute("DELETE FROM services WHERE id = %s", (service_id,))
+        cur.execute("DELETE FROM services WHERE id = %s", (id,))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Service supprimé avec succès'}), 200
@@ -63,11 +61,11 @@ def delete_service(service_id):
         return jsonify({'error': str(e)}), 500
     
 # Route pour la récupération d'un service proposé par un prestataire
-def get_service(service_id):
+def get_service(id):
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM services WHERE id = %s", (service_id,))
+        cur.execute("SELECT * FROM services WHERE id = %s", (id,))
         service = cur.fetchone()
         cur.close()
         if service:

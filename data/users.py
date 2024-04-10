@@ -3,14 +3,12 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 
 import psycopg2
 
-from data import users, services
-
 # Configuration de la connexion à la base de données
 conn = psycopg2.connect(
     dbname="postgres",
     user="postgres",
     password="postgres",
-    host="localhost",
+    host="host.docker.internal",
     port="5432"
 )
 
@@ -21,23 +19,23 @@ def create_user():
     
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO utilisateurs (nom) VALUES (%s) RETURNING id", (nom))
+        cur.execute("INSERT INTO utilisateurs (nom) VALUES (%s) RETURNING id", (nom,))
         user_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': user_id, 'nom': nom}), 201
+        return jsonify({'id': id, 'nom': nom}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
 
 # Route pour la modification d'un compte utilisateur par son ID
-def update_user(user_id):
+def update_user(id):
     data = request.json
     nom = data.get('nom')
 
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE utilisateurs SET nom = %s WHERE id = %s", (nom, user_id))
+        cur.execute("UPDATE utilisateurs SET nom = %s WHERE id = %s", (nom, id))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Utilisateur mis à jour avec succès'}), 200
@@ -46,10 +44,10 @@ def update_user(user_id):
         return jsonify({'error': str(e)}), 500
 
 # Route pour la suppression d'un compte utilisateur par son ID
-def delete_user(user_id):
+def delete_user(id):
     try:
         cur = conn.cursor()
-        cur.execute("DELETE FROM utilisateurs WHERE id = %s", (user_id,))
+        cur.execute("DELETE FROM utilisateurs WHERE id = %s", (id,))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Utilisateur supprimé avec succès'}), 200
@@ -58,10 +56,10 @@ def delete_user(user_id):
         return jsonify({'error': str(e)}), 500
 
 # Route pour la récupération d'un utilisateur
-def get_user(user_id):
+def get_user(id):
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM utilisateurs WHERE id = %s", (user_id,))
+        cur.execute("SELECT * FROM utilisateurs WHERE id = %s", (id,))
         user = cur.fetchone()
         cur.close()
         if user:

@@ -18,21 +18,21 @@ app.add_url_rule('/login', view_func=login, methods=['POST'])
 
 app.add_url_rule('/create_user', view_func=create_user, methods=['POST'])
 
-app.add_url_rule('/update_user', view_func=update_user, methods=['PUT'])
+app.add_url_rule('/update_user/<id>', view_func=update_user, methods=['PUT'])
 
-app.add_url_rule('/delete_user', view_func=delete_user, methods=['DELETE'])
+app.add_url_rule('/delete_user/<id>', view_func=delete_user, methods=['DELETE'])
 
 app.add_url_rule('/get_users', view_func=get_users, methods=['GET'])
 
-app.add_url_rule('/get_user=', view_func=get_user, methods=['GET'])
+app.add_url_rule('/get_user/<id>', view_func=get_user, methods=['GET'])
 
 app.add_url_rule('/create_service', view_func=create_service, methods=['POST'])
 
-app.add_url_rule('/update_service', view_func=update_service, methods=['PUT'])
+app.add_url_rule('/update_service/<id>', view_func=update_service, methods=['PUT'])
 
-app.add_url_rule('/delete_service', view_func=delete_service, methods=['DELETE'])
+app.add_url_rule('/delete_service/<id>', view_func=delete_service, methods=['DELETE'])
 
-app.add_url_rule('/get_service', view_func=get_service, methods=['GET'])
+app.add_url_rule('/get_service/<id>', view_func=get_service, methods=['GET'])
 
 def handle_signal(*args, **kwargs):
     sys.exit(0)
