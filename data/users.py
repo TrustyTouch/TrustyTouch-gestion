@@ -36,10 +36,12 @@ def create_user():
 def update_user(id):
     data = request.json
     nom = data.get('nom')
+    id_roles = data.get('id_roles')
+    code_parainage = data.get('code_parainage')
 
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE utilisateurs SET nom = %s WHERE id = %s", (nom, id))
+        cur.execute("UPDATE utilisateurs SET nom = %s, id_roles = %s, code_parainage = %s WHERE id = %s", (nom, id_roles, code_parainage, id))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Utilisateur mis à jour avec succès'}), 200
