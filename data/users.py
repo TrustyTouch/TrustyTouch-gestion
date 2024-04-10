@@ -16,14 +16,17 @@ conn = psycopg2.connect(
 def create_user():
     data = request.json
     nom = data.get('nom')
+    mot_de_passe = data.get('mot_de_passe')
+    id_roles = data.get('id_roles')
+    code_parainage = data.get('code_parainage')
     
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO utilisateurs (nom) VALUES (%s) RETURNING id", (nom,))
-        user_id = cur.fetchone()[0]
+        cur.execute("INSERT INTO utilisateurs (nom, mot_de_passe, id_roles, code_parainage) VALUES (%s, %s, %s, %s) RETURNING id", (nom, mot_de_passe, id_roles, code_parainage))
+        id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': id, 'nom': nom}), 201
+        return jsonify({'id': id, 'nom': nom, 'mot_de_passe': mot_de_passe, 'id_roles': id_roles, 'code_parainage': code_parainage}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
