@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 import hashlib
 import psycopg2
@@ -17,7 +16,7 @@ conn = psycopg2.connect(
 def create_user():
     data = request.json
     nom = data.get('nom')
-    mot_de_passe = data.get('mot_de_passe')
+    hashed_password = data.get('mot_de_passe')
     id_roles = data.get('id_roles')
     code_parainage = data.get('code_parainage')
     

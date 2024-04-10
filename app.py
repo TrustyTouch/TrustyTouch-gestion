@@ -1,11 +1,11 @@
 import sys
-from signal import signal, SIGTERM, SIGINT
+from signal import signal, SIGTERM
 
-from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask import Flask
+from flask_jwt_extended import JWTManager
 
 from routes.auth import login
-from data.services import create_service, update_service, delete_service, get_service
+from data.services import create_service, update_service, delete_service, get_service, get_services
 from data.users import create_user, update_user, delete_user, get_users, get_user
 
 app = Flask(__name__)
@@ -34,7 +34,7 @@ app.add_url_rule('/delete_service/<id>', view_func=delete_service, methods=['DEL
 
 app.add_url_rule('/get_service/<titre>', view_func=get_service, methods=['GET'])
 
-app.add_url_rule('/get_service/<id_categorie>', view_func=get_service, methods=['GET'])
+app.add_url_rule('/get_services/<id_categorie>', view_func=get_services, methods=['GET'])
 
 def handle_signal(*args, **kwargs):
     sys.exit(0)

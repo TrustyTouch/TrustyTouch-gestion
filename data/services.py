@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 import psycopg2
 
@@ -26,7 +25,7 @@ def create_service():
     # Créer un nouvel enregistrement de service dans la base de données
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO services (titre, description, prix, images) VALUES (%s, %s, %s, %s) RETURNING id", (titre, description, prix, images))
+        cur.execute("INSERT INTO services (titre, description, id_createur, id_categorie, prix, images) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", (titre, description, id_createur, id_categorie, prix, images))
         id = cur.fetchone()[0]
         conn.commit()
         cur.close()
@@ -48,13 +47,15 @@ def update_service(id):
     # Mettre à jour l'enregistrement de service dans la base de données
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE services SET titre = %s, description = %s, id_categorie = %s, prix = %s, images = %s, WHERE id = %s", (titre, description, id_categorie, prix, images, id))
+        cur.execute("UPDATE services SET titre = %s, description = %s, id_categorie = %s, prix = %s, images = %s WHERE id = %s",
+                    (titre, description, id_categorie, prix, images, id))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Service mis à jour avec succès'}), 200
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
+
 
 # Route pour la suppression d'un service proposé par un prestataire par l'ID
 def delete_service(id):
