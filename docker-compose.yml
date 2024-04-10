@@ -2,7 +2,7 @@ services:
   db:
     container_name: postgres_db
     restart: unless-stopped
-    image: postgres
+    image: postgres:14
     ports: 
       - "5432:5432"
     environment:
@@ -13,16 +13,16 @@ services:
       - "./docker/init:/docker-entrypoint-initdb.d:ro"
       - "postgres_db_data:/var/lib/postgresql/data"
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - DATABASE_URL=postgresql://user:password@db:5432/dbname
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/dbname
 
 volumes:
   postgres_db_data:
