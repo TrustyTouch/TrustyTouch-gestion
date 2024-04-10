@@ -14,42 +14,66 @@ conn = psycopg2.connect(
     port="5432"
 )
 
-# Route pour la création des services proposés par les prestataires
-@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
+# Route pour la création de service proposé par un prestataire par l'ID
 def create_service():
-    data = request.get_json()
-    service_name = data.get('service_name')
-    createur = data.get('createur')
-    # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'createur': createur}
-    return jsonify({'message': 'Service ajouté avec succès'})
+    # Récupérer les données du service à partir de la requête JSON
+    data = request.json
+    nom = data.get('nom')
 
-# Route pour la modification des services proposés par les prestataires
-@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
-def update_service():
-    data = request.get_json()
-    service_name = data.get('service_name')
-    createur = data.get('createur')
-    # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'createur': createur}
-    return jsonify({'message': 'Service modifié avec succès'})
+    # Créer un nouvel enregistrement de service dans la base de données
+    try:
+        cur = conn.cursor()
+        cur.execute("INSERT INTO services (nom) VALUES (%s) RETURNING id", (nom))
+        service_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        return jsonify({'id': service_id, 'nom': nom}), 201
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
 
-# Route pour la suppression des services proposés par les prestataires
-@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
-def delete_service():
-    data = request.get_json()
-    service_name = data.get('service_name')
-    createur = data.get('createur')
-    # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'createur': createur}
-    return jsonify({'message': 'Service supprimé avec succès'})
+# Route pour la modification d'un service proposé par un prestataire par l'ID
+def update_service(service_id):
+    # Récupérer les données mises à jour du service à partir de la requête JSON
+    data = request.json
+    nom = data.get('nom')
 
-# Route pour la récupération des services proposés par les prestataires
-@jwt_required()  # L'utilisateur doit être authentifié pour accéder à cette route
-def get_service():
-    data = request.get_json()
-    service_name = data.get('service_name')
-    createur = data.get('createur')
-    # Stocker les informations sur le service dans une base de données
-    services[service_name] = {'createur': createur}
-    return jsonify({'message': 'Service trouvé avec succès'})
+    # Mettre à jour l'enregistrement de service dans la base de données
+    try:
+        cur = conn.cursor()
+        cur.execute("UPDATE services SET nom = %s WHERE id = %s", (nom, service_id))
+        conn.commit()
+        cur.close()
+        return jsonify({'message': 'Service mis à jour avec succès'}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# Route pour la suppression d'un service proposé par un prestataire par l'ID
+def delete_service(service_id):
+    # Supprimer l'enregistrement de service de la base de données
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM services WHERE id = %s", (service_id,))
+        conn.commit()
+        cur.close()
+        return jsonify({'message': 'Service supprimé avec succès'}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+# Route pour la récupération d'un service proposé par un prestataire
+def get_service(service_id):
+    # Récupérer les données du service depuis la base de données
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM services WHERE id = %s", (service_id,))
+        service = cur.fetchone()
+        cur.close()
+        if service:
+            service_dict = {'id': service[0], 'nom': service[1], 'description': service[2]}
+            return jsonify(service_dict), 200
+        else:
+            return jsonify({'error': 'Service non trouvé'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
