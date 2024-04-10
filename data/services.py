@@ -16,16 +16,21 @@ conn = psycopg2.connect(
 def create_service():
     # Récupérer les données du service à partir de la requête JSON
     data = request.json
-    nom = data.get('nom')
+    titre = data.get('titre')
+    description = data.get('description')
+    id_createur = data.get('id_createur')
+    id_categorie = data.get('id_categorie')
+    prix = data.get('prix')
+    images = data.get('images')
 
     # Créer un nouvel enregistrement de service dans la base de données
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO services (titre) VALUES (%s) RETURNING id", (nom,))
-        service_id = cur.fetchone()[0]
+        cur.execute("INSERT INTO services (titre, description, prix, images) VALUES (%s, %s, %s, %s) RETURNING id", (titre, description, prix, images))
+        id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': id, 'nom': nom}), 201
+        return jsonify({'id': id, 'titre': titre, 'description': description, 'id_createur': id_createur, 'id_categorie': id_categorie, 'prix': prix, 'images': images}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
@@ -34,12 +39,16 @@ def create_service():
 def update_service(id):
     # Récupérer les données mises à jour du service à partir de la requête JSON
     data = request.json
-    nom = data.get('nom')
+    titre = data.get('titre')
+    description = data.get('description')
+    id_categorie = data.get('id_categorie')
+    prix = data.get('prix')
+    images = data.get('images')
 
     # Mettre à jour l'enregistrement de service dans la base de données
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE services SET nom = %s WHERE id = %s", (nom, id))
+        cur.execute("UPDATE services SET titre = %s, description = %s, id_categorie = %s, prix = %s, images = %s, WHERE id = %s", (titre, description, id_categorie, prix, images, id))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Service mis à jour avec succès'}), 200
@@ -60,16 +69,32 @@ def delete_service(id):
         conn.rollback()
         return jsonify({'error': str(e)}), 500
     
-# Route pour la récupération d'un service proposé par un prestataire
-def get_service(id):
+# Route pour la récupération d'un service proposé par un prestataire en fonction de son titre
+def get_service(titre):
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM services WHERE id = %s", (id,))
+        cur.execute("SELECT * FROM services WHERE titre = %s", (titre,))
         service = cur.fetchone()
         cur.close()
         if service:
-            service_dict = {'id': service[0], 'nom': service[1], 'description': service[2]}
+            service_dict = {'id': service[0], 'titre': service[1], 'description': service[2]}
+            return jsonify(service_dict), 200
+        else:
+            return jsonify({'error': 'Service non trouvé'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route pour la récupération d'un service proposé par un prestataire en fonction de sa catégorie
+def get_services(id_categorie):
+    # Récupérer les données du service depuis la base de données
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM services WHERE id_categorie = %s", (id_categorie,))
+        service = cur.fetchone()
+        cur.close()
+        if service:
+            service_dict = {'id': service[0], 'titre': service[1], 'id_categorie': service[4]}
             return jsonify(service_dict), 200
         else:
             return jsonify({'error': 'Service non trouvé'}), 404

@@ -32,7 +32,9 @@ app.add_url_rule('/update_service/<id>', view_func=update_service, methods=['PUT
 
 app.add_url_rule('/delete_service/<id>', view_func=delete_service, methods=['DELETE'])
 
-app.add_url_rule('/get_service/<id>', view_func=get_service, methods=['GET'])
+app.add_url_rule('/get_service/<titre>', view_func=get_service, methods=['GET'])
+
+app.add_url_rule('/get_service/<id_categorie>', view_func=get_service, methods=['GET'])
 
 def handle_signal(*args, **kwargs):
     sys.exit(0)

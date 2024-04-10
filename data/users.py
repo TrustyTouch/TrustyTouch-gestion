@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
+import hashlib
 import psycopg2
 
 # Configuration de la connexion à la base de données
@@ -22,11 +23,12 @@ def create_user():
     
     try:
         cur = conn.cursor()
-        cur.execute("INSERT INTO utilisateurs (nom, mot_de_passe, id_roles, code_parainage) VALUES (%s, %s, %s, %s) RETURNING id", (nom, mot_de_passe, id_roles, code_parainage))
+        hashed_password = hashlib.sha256(data['mot_de_passe'].encode('utf-8')).hexdigest()
+        cur.execute("INSERT INTO utilisateurs (nom, mot_de_passe, id_roles, code_parainage) VALUES (%s, %s, %s, %s) RETURNING id", (nom, hashed_password, id_roles, code_parainage))
         id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': id, 'nom': nom, 'mot_de_passe': mot_de_passe, 'id_roles': id_roles, 'code_parainage': code_parainage}), 201
+        return jsonify({'id': id, 'nom': nom, 'mot_de_passe': hashed_password, 'id_roles': id_roles, 'code_parainage': code_parainage}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
@@ -66,7 +68,7 @@ def get_user(id):
         user = cur.fetchone()
         cur.close()
         if user:
-            user_dict = {'id': user[0], 'nom': user[1]}
+            user_dict = {'id': user[0], 'nom': user[1], 'mot_de_passe': user[2], 'id_roles': user[3], 'code_parainage': user[4]}
             return jsonify(user_dict), 200
         else:
             return jsonify({'error': 'Utilisateur non trouvé'}), 404
@@ -80,7 +82,7 @@ def get_users():
         cur.execute("SELECT * FROM utilisateurs")
         users = cur.fetchall()
         cur.close()
-        user_list = [{'id': user[0], 'nom': user[1]} for user in users]
+        user_list = [{'id': user[0], 'nom': user[1], 'mot_de_passe': user[2], 'id_roles': user[3], 'code_parainage': user[4]} for user in users]
         return jsonify(user_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
