@@ -1,25 +1,55 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-from data import users, services
+import secrets
+import psycopg2
+import hashlib
+
+# Configuration de la connexion à la base de données
+conn = psycopg2.connect(
+    dbname="postgres",
+    user="postgres",
+    password="postgres",
+    host="host.docker.internal",
+    port="5432"
+)
 
 app = Flask(__name__)
 
+# Générer une clé JWT secrète aléatoire
+jwt_secret_key = secrets.token_urlsafe(32)
+
 # Configuration de la clé secrète pour JWT
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'  # Changez ceci en une clé secrète forte dans un environnement de production
+app.config['JWT_SECRET_KEY'] = jwt_secret_key
 jwt = JWTManager(app)
 
 # Route pour la connexion d'un utilisateur
-def login():
+def login():  
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    if username in users and users[username]['password'] == password:
-        # Créer un jeton d'accès JWT valide pour cet utilisateur
-        access_token = create_access_token(identity=username)
-        return jsonify(access_token=access_token)
+    nom = data.get('nom')
+    mot_de_passe = data.get('mot_de_passe')
+
+    cur = conn.cursor()
+    cur.execute("SELECT nom, mot_de_passe FROM utilisateurs WHERE nom = %s", (nom,))
+    utilisateur = cur.fetchone()
+    cur.close()
+
+    if utilisateur:
+        # Récupérer le hachage du mot de passe depuis la base de données
+        hashed_password = utilisateur[1]
+        
+        # Calculer le hachage SHA-256 du mot de passe fourni
+        hashed_password_input = hashlib.sha256(mot_de_passe.encode('utf-8')).hexdigest()
+
+        # Comparer les hachages
+        if hashed_password == hashed_password_input:
+            # Générer un jeton d'accès JWT valide pour cet utilisateur
+            access_token = create_access_token(identity=nom)
+            return jsonify({'message': 'Connexion réussie', 'access_token': access_token}), 200
+        else:
+            return jsonify({'message': hashed_password, "test": hashed_password_input}), 401
     else:
-        return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'})
+        return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
 
 if __name__ == '__main__':
     app.run(debug=True)
