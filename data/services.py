@@ -114,3 +114,20 @@ def get_services(id_categorie):
             return jsonify({'error': 'Service non trouvé'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@jwt_required()
+@cross_origin()
+def get_my_services(id_createur):
+    # Récupérer les données du service depuis la base de données
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT s.id, s.titre, s.id_categorie, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) WHERE s.id_categorie = %s", (id_createur,))
+        services = cur.fetchall()
+        cur.close()
+        if services:
+            service_dict =[{'id': service[0], 'titre': service[1], 'id_categorie': service[2], 'nom': service[3]} for service in services]
+            return jsonify(service_dict), 200
+        else:
+            return jsonify({'error': 'Service non trouvé'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
