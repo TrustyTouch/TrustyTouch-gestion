@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required
 
+from flask_cors import cross_origin
+
 import hashlib
 import psycopg2
 
@@ -14,6 +16,7 @@ conn = psycopg2.connect(
 )
 
 # Route pour créer un nouvel utilisateur
+@cross_origin()
 def create_user():
     data = request.json
     nom = data.get('nom')
@@ -35,6 +38,7 @@ def create_user():
 
 # Route pour la modification d'un compte utilisateur par son ID
 @jwt_required()
+@cross_origin()
 def update_user(id):
     data = request.json
     nom = data.get('nom')
@@ -53,6 +57,7 @@ def update_user(id):
 
 # Route pour la suppression d'un compte utilisateur par son ID
 @jwt_required()
+@cross_origin()
 def delete_user(id):
     try:
         cur = conn.cursor()
@@ -66,6 +71,7 @@ def delete_user(id):
 
 # Route pour la récupération d'un utilisateur
 @jwt_required()
+@cross_origin()
 def get_user(id):
     try:
         cur = conn.cursor()
@@ -82,6 +88,7 @@ def get_user(id):
 
 # Route pour la récupération de tous les utilisateur
 @jwt_required()
+@cross_origin()
 def get_users():
     try:
         cur = conn.cursor()

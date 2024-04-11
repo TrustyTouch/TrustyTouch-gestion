@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required
 
+from flask_cors import cross_origin
+
 import psycopg2
 
 # Configuration de la connexion à la base de données
@@ -14,6 +16,7 @@ conn = psycopg2.connect(
 
 # Route pour la création de service proposé par un prestataire par l'ID
 @jwt_required()
+@cross_origin()
 def create_service():
     # Récupérer les données du service à partir de la requête JSON
     data = request.json
@@ -38,6 +41,7 @@ def create_service():
 
 # Route pour la modification d'un service proposé par un prestataire par l'ID
 @jwt_required()
+@cross_origin()
 def update_service(id):
     # Récupérer les données mises à jour du service à partir de la requête JSON
     data = request.json
@@ -62,6 +66,7 @@ def update_service(id):
 
 # Route pour la suppression d'un service proposé par un prestataire par l'ID
 @jwt_required()
+@cross_origin()
 def delete_service(id):
     # Supprimer l'enregistrement de service de la base de données
     try:
@@ -76,6 +81,7 @@ def delete_service(id):
     
 # Route pour la récupération d'un service proposé par un prestataire en fonction de son titre
 @jwt_required()
+@cross_origin()
 def get_service(titre):
     # Récupérer les données du service depuis la base de données
     try:
@@ -93,6 +99,7 @@ def get_service(titre):
 
 # Route pour la récupération d'un service proposé par un prestataire en fonction de sa catégorie
 @jwt_required()
+@cross_origin()
 def get_services(id_categorie):
     # Récupérer les données du service depuis la base de données
     try:
