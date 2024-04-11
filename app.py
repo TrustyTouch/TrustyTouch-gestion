@@ -1,4 +1,5 @@
 import sys
+import secrets
 from signal import signal, SIGTERM
 
 from flask_cors import CORS, cross_origin
@@ -14,8 +15,11 @@ from data.etapes import create_etape, update_etape, delete_etape, get_etape
 app = Flask(__name__)
 cors = CORS(app)
 
+# Générer une clé JWT secrète aléatoire
+jwt_secret_key = secrets.token_urlsafe(32)
+
 # Configuration de la clé secrète pour JWT
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'  # Changez ceci en une clé secrète forte dans un environnement de production
+app.config['JWT_SECRET_KEY'] = jwt_secret_key
 jwt = JWTManager(app)
 
 app.add_url_rule('/login', view_func=login, methods=['POST'])
@@ -42,7 +46,7 @@ app.add_url_rule('/get_services/<id_categorie>', view_func=get_services, methods
 
 app.add_url_rule('/get_my_services', view_func=get_my_services, methods=['GET'])
 
-app.add_url_rule('/create_etape>', view_func=create_etape, methods=['POST'])
+app.add_url_rule('/create_etape', view_func=create_etape, methods=['POST'])
 
 app.add_url_rule('/update_etape/<id_service>', view_func=update_etape, methods=['PUT'])
 

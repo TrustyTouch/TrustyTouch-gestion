@@ -4,7 +4,6 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 
 from flask_cors import cross_origin
 
-import secrets
 import psycopg2
 import hashlib
 
@@ -18,13 +17,6 @@ conn = psycopg2.connect(
 )
 
 app = Flask(__name__)
-
-# Générer une clé JWT secrète aléatoire
-jwt_secret_key = secrets.token_urlsafe(32)
-
-# Configuration de la clé secrète pour JWT
-app.config['JWT_SECRET_KEY'] = jwt_secret_key
-jwt = JWTManager(app)
 
 # Route pour la connexion d'un utilisateur
 @cross_origin()
