@@ -14,6 +14,16 @@ CREATE TABLE categories (
     image VARCHAR(100)
 );
 
+INSERT INTO categories (nom) VALUES 
+    ('Electricien'),
+    ('Vidéos'),
+    ('Travaux publics'),
+    ('Divertissement'),
+    ('Immobilier'),
+    ('Santé'),
+    ('Agricole'),
+    ('Nettoyage');
+
 CREATE TABLE utilisateurs (
     id serial PRIMARY KEY,
     nom VARCHAR(50),
