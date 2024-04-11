@@ -1,3 +1,4 @@
+from datetime import timedelta 
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
@@ -47,7 +48,7 @@ def login():
         # Comparer les hachages
         if mdp == mdp_input:
             # Générer un jeton d'accès JWT valide pour cet utilisateur
-            access_token = create_access_token(identity=nom)        
+            access_token = create_access_token(identity=nom, expires_delta=timedelta(hours=4))        
             user_dict = {'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code}
             return jsonify({'message': 'Connexion réussie', 'access_token': access_token, 'user': user_dict}), 200
         else:

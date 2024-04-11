@@ -82,15 +82,15 @@ def delete_service(id):
 # Route pour la récupération d'un service proposé par un prestataire en fonction de son titre
 @jwt_required()
 @cross_origin()
-def get_service(titre):
+def get_service(id):
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM services WHERE titre = %s", (titre,))
+        cur.execute("SELECT s.id, s.titre, s.description, c.nom, s.prix, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) JOIN categories c ON (s.id_categorie = c.id) WHERE s.id = %s", (id,))
         service = cur.fetchone()
         cur.close()
         if service:
-            service_dict = {'id': service[0], 'titre': service[1], 'description': service[2]}
+            service_dict = {'id': service[0], 'titre': service[1], 'description': service[2], 'categorie': service[3],'prix': service[4], 'nom': service[5],}
             return jsonify(service_dict), 200
         else:
             return jsonify({'error': 'Service non trouvé'}), 404
@@ -104,11 +104,11 @@ def get_services(id_categorie):
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM services WHERE id_categorie = %s", (id_categorie,))
-        service = cur.fetchone()
+        cur.execute("SELECT s.id, s.titre, s.id_categorie, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) WHERE s.id_categorie = %s", (id_categorie,))
+        services = cur.fetchall()
         cur.close()
-        if service:
-            service_dict = {'id': service[0], 'titre': service[1], 'id_categorie': service[4]}
+        if services:
+            service_dict =[{'id': service[0], 'titre': service[1], 'id_categorie': service[2], 'nom': service[3]} for service in services]
             return jsonify(service_dict), 200
         else:
             return jsonify({'error': 'Service non trouvé'}), 404
