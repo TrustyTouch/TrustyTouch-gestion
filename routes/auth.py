@@ -28,26 +28,30 @@ def login():
     data = request.get_json()
     nom = data.get('nom')
     mot_de_passe = data.get('mot_de_passe')
+    id = data.get('id')
 
     cur = conn.cursor()
     cur.execute("SELECT nom, mot_de_passe FROM utilisateurs WHERE nom = %s", (nom,))
+    cur.execute("SELECT * FROM utilisateurs WHERE id = %s", (id,))
+    user = cur.fetchone()
     utilisateur = cur.fetchone()
     cur.close()
 
     if utilisateur:
         # Récupérer le hachage du mot de passe depuis la base de données
         hashed_password = utilisateur[1]
-        
+
         # Calculer le hachage SHA-256 du mot de passe fourni
         hashed_password_input = hashlib.sha256(mot_de_passe.encode('utf-8')).hexdigest()
 
         # Comparer les hachages
         if hashed_password == hashed_password_input:
             # Générer un jeton d'accès JWT valide pour cet utilisateur
-            access_token = create_access_token(identity=nom)
-            return jsonify({'message': 'Connexion réussie', 'access_token': access_token}), 200
+            access_token = create_access_token(identity=nom)        
+            user_dict = {'id': user[0], 'nom': user[1], 'mot_de_passe': user[2], 'id_roles': user[3], 'code_parainage': user[4]}
+            return jsonify({'message': 'Connexion réussie', 'access_token': access_token, 'user': user_dict}), 200
         else:
-            return jsonify({'message': hashed_password, "test": hashed_password_input}), 401
+            return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
     else:
         return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
 
