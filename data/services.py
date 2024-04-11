@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, jwt_required
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 from flask_cors import cross_origin
 
@@ -117,11 +117,11 @@ def get_services(id_categorie):
     
 @jwt_required()
 @cross_origin()
-def get_my_services(id_createur):
+def get_my_services():
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
-        cur.execute("SELECT s.id, s.titre, s.id_categorie, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) WHERE s.id_categorie = %s", (id_createur,))
+        cur.execute("SELECT s.id, s.titre, s.id_categorie, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) WHERE u.nom = %s", (get_jwt_identity(),))
         services = cur.fetchall()
         cur.close()
         if services:
@@ -130,4 +130,4 @@ def get_my_services(id_createur):
         else:
             return jsonify({'error': 'Service non trouvé'}), 404
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500 
