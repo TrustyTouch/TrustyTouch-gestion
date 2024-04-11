@@ -28,7 +28,8 @@ def create_user():
         id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': id, 'nom': nom, 'mot_de_passe': hashed_password, 'id_roles': id_roles, 'code_parainage': code_parainage}), 201
+        
+        return jsonify({'id': id, 'nom': nom, 'id_roles': id_roles, 'code_parainage': code_parainage}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
@@ -73,7 +74,8 @@ def get_user(id):
         user = cur.fetchone()
         cur.close()
         if user:
-            user_dict = {'id': user[0], 'nom': user[1], 'mot_de_passe': user[2], 'id_roles': user[3], 'code_parainage': user[4]}
+            id, nom, _, roles, code = user
+            user_dict = {'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code}
             return jsonify(user_dict), 200
         else:
             return jsonify({'error': 'Utilisateur non trouvé'}), 404
@@ -88,7 +90,7 @@ def get_users():
         cur.execute("SELECT * FROM utilisateurs")
         users = cur.fetchall()
         cur.close()
-        user_list = [{'id': user[0], 'nom': user[1], 'mot_de_passe': user[2], 'id_roles': user[3], 'code_parainage': user[4]} for user in users]
+        user_list = [{'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code} for id, nom, _, roles, code in users]
         return jsonify(user_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
