@@ -40,7 +40,7 @@ def login():
 
     if utilisateur:
         # Récupérer le hachage du mot de passe depuis la base de données
-        id, nom, mdp, roles, code = utilisateur
+        id, nom, mdp, roles, code, _ = utilisateur
 
         # Calculer le hachage SHA-256 du mot de passe fourni
         mdp_input = hashlib.sha256(mot_de_passe.encode('utf-8')).hexdigest()

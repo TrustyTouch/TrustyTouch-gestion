@@ -43,12 +43,11 @@ def create_user():
 def update_user(id):
     data = request.json
     nom = data.get('nom')
-    id_roles = data.get('id_roles')
-    code_parainage = data.get('code_parainage')
+    biographie = data.get('biographie')
 
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE utilisateurs SET nom = %s, id_roles = %s, code_parainage = %s WHERE id = %s", (nom, id_roles, code_parainage, id))
+        cur.execute("UPDATE utilisateurs SET nom = %s, biographie = %s WHERE id = %s", (nom, biographie, id))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Utilisateur mis à jour avec succès'}), 200
@@ -62,6 +61,7 @@ def update_user(id):
 def delete_user(id):
     try:
         cur = conn.cursor()
+        cur.execute("DELETE FROM services s WHERE s.id_createur = %s", (id,))
         cur.execute("DELETE FROM utilisateurs WHERE id = %s", (id,))
         conn.commit()
         cur.close()
@@ -80,8 +80,8 @@ def get_user(id):
         user = cur.fetchone()
         cur.close()
         if user:
-            id, nom, _, roles, code = user
-            user_dict = {'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code}
+            id, nom, _, roles, code, biographie = user
+            user_dict = {'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code, 'biographie': biographie }
             return jsonify(user_dict), 200
         else:
             return jsonify({'error': 'Utilisateur non trouvé'}), 404
@@ -97,7 +97,7 @@ def get_users():
         cur.execute("SELECT * FROM utilisateurs")
         users = cur.fetchall()
         cur.close()
-        user_list = [{'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code} for id, nom, _, roles, code in users]
+        user_list = [{'id': id, 'nom': nom, 'id_roles': roles, 'code_parainage': code} for id, nom, _, roles, code, _ in users]
         return jsonify(user_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500

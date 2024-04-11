@@ -53,7 +53,6 @@ app.add_url_rule('/get_etape/<id_service>', view_func=get_etape, methods=['GET']
 def handle_signal(*args, **kwargs):
     sys.exit(0)
 signal(SIGTERM, handle_signal)
-# signal(SIGINT, handle_signal)
 
 if __name__ == '__main__':
     app.run(debug=True)

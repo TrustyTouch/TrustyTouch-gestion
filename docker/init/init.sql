@@ -28,9 +28,9 @@ CREATE TABLE utilisateurs (
     id serial PRIMARY KEY,
     nom VARCHAR(50),
     mot_de_passe VARCHAR(255),
-    id_roles INT, -- Référence à l'ID du rôle de l'utilisateur
-    FOREIGN KEY (id_roles) REFERENCES roles(id),
-    code_parainage INT
+    id_roles INT REFERENCES roles(id), -- Référence à l'ID du rôle de l'utilisateur
+    code_parainage INT,
+    biographie TEXT NOT NULL DEFAULT ''
 );
 
 CREATE TABLE services (

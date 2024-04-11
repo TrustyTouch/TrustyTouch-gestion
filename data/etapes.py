@@ -26,6 +26,7 @@ def create_etape():
     try:
         cur = conn.cursor()
         cur.execute("INSERT INTO etapes (statut, id_service, id_demandeur) VALUES (%s, %s, %s) RETURNING id", (statut, id_service, id_demandeur))
+        id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         return jsonify({'id': id, 'statut': statut, 'id_service': id_service, 'id_demandeur': id_demandeur}), 201
