@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
+from flask_cors import cross_origin
+
 import secrets
 import psycopg2
 import hashlib
@@ -24,6 +26,7 @@ app.config['JWT_SECRET_KEY'] = jwt_secret_key
 jwt = JWTManager(app)
 
 # Route pour la connexion d'un utilisateur
+@cross_origin()
 def login():  
     data = request.get_json()
     nom = data.get('nom')

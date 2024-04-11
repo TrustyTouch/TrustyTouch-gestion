@@ -1,6 +1,8 @@
 import sys
 from signal import signal, SIGTERM
 
+from flask_cors import CORS, cross_origin
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
@@ -9,6 +11,7 @@ from data.services import create_service, update_service, delete_service, get_se
 from data.users import create_user, update_user, delete_user, get_users, get_user
 
 app = Flask(__name__)
+cors = CORS(app)
 
 # Configuration de la clé secrète pour JWT
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'  # Changez ceci en une clé secrète forte dans un environnement de production

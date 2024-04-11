@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required
 
+from flask_cors import cross_origin
+
 import psycopg2
 
 # Configuration de la connexion à la base de données
@@ -14,6 +16,7 @@ conn = psycopg2.connect(
 
 # Route pour créer une nouvelle étape
 @jwt_required()
+@cross_origin()
 def create_etape():
     data = request.json
     id_service = data.get('id_service')
@@ -32,6 +35,7 @@ def create_etape():
 
 # Route pour la modification d'une étape en fonction de l'ID du service
 @jwt_required()
+@cross_origin()
 def update_etape(id):
     data = request.json
     id_demandeur = data.get('id_demandeur')
@@ -49,6 +53,7 @@ def update_etape(id):
 
 # Route pour la suppression d'une étape en fonction de l'ID du service
 @jwt_required()
+@cross_origin()
 def delete_etape(id):
     try:
         cur = conn.cursor()
@@ -62,6 +67,7 @@ def delete_etape(id):
 
 # Route pour la récupération d'une étape en fonction de l'ID du service
 @jwt_required()
+@cross_origin()
 def get_etape(id):
     try:
         cur = conn.cursor()
