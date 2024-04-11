@@ -9,6 +9,7 @@ from flask_jwt_extended import JWTManager
 from routes.auth import login
 from data.services import create_service, update_service, delete_service, get_service, get_services, get_my_services
 from data.users import create_user, update_user, delete_user, get_users, get_user
+from data.etapes import create_etape, update_etape, delete_etape, get_etape
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -40,6 +41,14 @@ app.add_url_rule('/get_service/<id>', view_func=get_service, methods=['GET'])
 app.add_url_rule('/get_services/<id_categorie>', view_func=get_services, methods=['GET'])
 
 app.add_url_rule('/get_my_services/<id_createur>', view_func=get_my_services, methods=['GET'])
+
+app.add_url_rule('/create_etape>', view_func=create_etape, methods=['POST'])
+
+app.add_url_rule('/update_etape/<id>', view_func=update_etape, methods=['PUT'])
+
+app.add_url_rule('/delete_etape/<id>', view_func=delete_etape, methods=['DELETE'])
+
+app.add_url_rule('/get_etape/<id>', view_func=get_etape, methods=['GET'])
 
 def handle_signal(*args, **kwargs):
     sys.exit(0)

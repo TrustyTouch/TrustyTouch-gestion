@@ -36,14 +36,14 @@ def create_etape():
 # Route pour la modification d'une étape en fonction de l'ID du service
 @jwt_required()
 @cross_origin()
-def update_etape(id):
+def update_etape(id_service):
     data = request.json
     id_demandeur = data.get('id_demandeur')
     statut = data.get('statut')
 
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE etapes SET statut = %s, id_demandeur = %s WHERE id = %s", (statut, id_demandeur, id))
+        cur.execute("UPDATE etapes SET statut = %s, id_demandeur = %s WHERE id_service = %s", (statut, id_demandeur, id_service))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Etape mise à jour avec succès'}), 200
@@ -54,10 +54,10 @@ def update_etape(id):
 # Route pour la suppression d'une étape en fonction de l'ID du service
 @jwt_required()
 @cross_origin()
-def delete_etape(id):
+def delete_etape(id_service):
     try:
         cur = conn.cursor()
-        cur.execute("DELETE FROM etapes WHERE id = %s", (id,))
+        cur.execute("DELETE FROM etapes WHERE id_service = %s", (id_service,))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Etape supprimée avec succès'}), 200
@@ -68,10 +68,10 @@ def delete_etape(id):
 # Route pour la récupération d'une étape en fonction de l'ID du service
 @jwt_required()
 @cross_origin()
-def get_etape(id):
+def get_etape(id_service):
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM etapes WHERE id = %s", (id,))
+        cur.execute("SELECT * FROM etapes WHERE id_service = %s", (id_service,))
         etape = cur.fetchone()
         cur.close()
         if etape:
