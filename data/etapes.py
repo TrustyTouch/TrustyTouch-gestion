@@ -58,7 +58,7 @@ def update_etape(id_service):
 def delete_etape(id_service):
     try:
         cur = conn.cursor()
-        cur.execute("DELETE FROM etapes WHERE id_service = %s", (id_service,))
+        cur.execute("DELETE * FROM etapes WHERE id_service = %s", (id_service,))
         conn.commit()
         cur.close()
         return jsonify({'message': 'Etape supprimée avec succès'}), 200
@@ -69,16 +69,13 @@ def delete_etape(id_service):
 # Route pour la récupération d'une étape en fonction de l'ID du service
 @jwt_required()
 @cross_origin()
-def get_etape(id_service):
+def get_etape(id_demandeur):
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM etapes WHERE id_service = %s", (id_service,))
-        etape = cur.fetchone()
+        cur.execute("SELECT * FROM etapes WHERE id_demandeur = %s", (id_demandeur,))
+        etapes = cur.fetchall()
         cur.close()
-        if etape:
-            etape_dict = {'id': etape[0], 'id_service': etape[1], 'id_demandeur': etape[2], 'statut': etape[3]}
-            return jsonify(etape_dict), 200
-        else:
-            return jsonify({'error': 'Etape non trouvée'}), 404
+        etape_list = [{'id': id, 'id_service': id_service, 'id_demandeur': id_demandeur, 'statut': statut} for id, id_service, id_demandeur, statut in etapes]
+        return jsonify(etape_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500

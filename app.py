@@ -52,7 +52,7 @@ app.add_url_rule('/update_etape/<id_service>', view_func=update_etape, methods=[
 
 app.add_url_rule('/delete_etape/<id_service>', view_func=delete_etape, methods=['DELETE'])
 
-app.add_url_rule('/get_etape/<id_service>', view_func=get_etape, methods=['GET'])
+app.add_url_rule('/get_etape/<id_demandeur>', view_func=get_etape, methods=['GET'])
 
 def handle_signal(*args, **kwargs):
     sys.exit(0)
