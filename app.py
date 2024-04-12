@@ -48,9 +48,9 @@ app.add_url_rule('/get_my_services', view_func=get_my_services, methods=['GET'])
 
 app.add_url_rule('/create_etape', view_func=create_etape, methods=['POST'])
 
-app.add_url_rule('/update_etape/<id_service>', view_func=update_etape, methods=['PUT'])
+app.add_url_rule('/update_etape/<id>', view_func=update_etape, methods=['PUT'])
 
-app.add_url_rule('/delete_etape/<id_service>', view_func=delete_etape, methods=['DELETE'])
+app.add_url_rule('/delete_etape/<id>', view_func=delete_etape, methods=['DELETE'])
 
 app.add_url_rule('/get_etape/<id_demandeur>', view_func=get_etape, methods=['GET'])
 
