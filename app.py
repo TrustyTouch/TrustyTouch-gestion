@@ -3,13 +3,13 @@ import secrets
 from signal import signal, SIGTERM
 
 from flask_cors import CORS, cross_origin
+from time import sleep
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-from routes.auth import login
 from data.services import create_service, update_service, delete_service, get_service, get_services, get_my_services
-from data.users import create_user, update_user, delete_user, get_users, get_user
+from data.users import create_user, update_user, delete_user, get_users, get_user, login
 from data.etapes import create_etape, update_etape, delete_etape, get_etape
 
 app = Flask(__name__)
@@ -59,4 +59,6 @@ def handle_signal(*args, **kwargs):
 signal(SIGTERM, handle_signal)
 
 if __name__ == '__main__':
+    sleep(1)
     app.run(debug=True)
+    

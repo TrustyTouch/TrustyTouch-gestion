@@ -3,21 +3,13 @@ from flask_jwt_extended import JWTManager, jwt_required
 
 from flask_cors import cross_origin
 
-import psycopg2
-
-# Configuration de la connexion à la base de données
-conn = psycopg2.connect(
-    dbname="postgres",
-    user="postgres",
-    password="postgres",
-    host="host.docker.internal",
-    port="5432"
-)
+from . import db
 
 # Route pour créer une nouvelle étape
 @jwt_required()
 @cross_origin()
 def create_etape():
+    conn = db.getconn()
     data = request.json
     id_service = data.get('id_service')
     id_demandeur = data.get('id_demandeur')
@@ -38,6 +30,7 @@ def create_etape():
 @jwt_required()
 @cross_origin()
 def update_etape(id):
+    conn = db.getconn()
     data = request.json
     id_demandeur = data.get('id_demandeur')
     statut = data.get('statut')
@@ -56,6 +49,7 @@ def update_etape(id):
 @jwt_required()
 @cross_origin()
 def delete_etape(id):
+    conn = db.getconn()
     try:
         cur = conn.cursor()
         cur.execute("DELETE FROM etapes WHERE id = %s", (id,))
@@ -70,9 +64,10 @@ def delete_etape(id):
 @jwt_required()
 @cross_origin()
 def get_etape(id_demandeur):
+    conn = db.getconn()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT e.id, e.id_service, e.id_demandeur, e.statut, s.titre, u.nom FROM etapes e JOIN services s ON (e.id_service = s.id) JOIN utilisateurs u ON (s.id_createur = u.id) WHERE id_demandeur = %s", (id_demandeur,))
+        cur.execute("SELECT e.id, e.id_service, u.id, e.statut, s.titre, u.nom FROM etapes e JOIN services s ON (e.id_service = s.id) JOIN utilisateurs u ON (s.id_createur = u.id) WHERE u.id = %s", (id_demandeur,))
         etapes = cur.fetchall()
         cur.close()
         etape_list = [{'id': id, 'id_service': id_service, 'id_demandeur': id_demandeur, 'statut': statut, 'titre': titre, 'nom': nom} for id, id_service, id_demandeur, statut, titre, nom in etapes]

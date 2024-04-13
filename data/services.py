@@ -3,21 +3,13 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 from flask_cors import cross_origin
 
-import psycopg2
-
-# Configuration de la connexion à la base de données
-conn = psycopg2.connect(
-    dbname="postgres",
-    user="postgres",
-    password="postgres",
-    host="host.docker.internal",
-    port="5432"
-)
+from . import db
 
 # Route pour la création de service proposé par un prestataire par l'ID
 @jwt_required()
 @cross_origin()
 def create_service():
+    conn = db.getconn()
     # Récupérer les données du service à partir de la requête JSON
     data = request.json
     titre = data.get('titre')
@@ -43,6 +35,7 @@ def create_service():
 @jwt_required()
 @cross_origin()
 def update_service(id):
+    conn = db.getconn()
     # Récupérer les données mises à jour du service à partir de la requête JSON
     data = request.json
     titre = data.get('titre')
@@ -67,6 +60,7 @@ def update_service(id):
 @jwt_required()
 @cross_origin()
 def delete_service(id):
+    conn = db.getconn()
     # Supprimer l'enregistrement de service de la base de données
     try:
         cur = conn.cursor()
@@ -82,6 +76,7 @@ def delete_service(id):
 @jwt_required()
 @cross_origin()
 def get_service(id):
+    conn = db.getconn()
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
@@ -100,6 +95,7 @@ def get_service(id):
 @jwt_required()
 @cross_origin()
 def get_services(id_categorie):
+    conn = db.getconn()
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
@@ -117,6 +113,7 @@ def get_services(id_categorie):
 @jwt_required()
 @cross_origin()
 def get_my_services():
+    conn = db.getconn()
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
