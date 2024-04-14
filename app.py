@@ -8,8 +8,8 @@ from time import sleep
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-from data.services import create_service, update_service, delete_service, get_service, get_services, get_my_services
-from data.users import create_user, update_user, delete_user, get_users, get_user, login
+from data.services import create_service, update_service, delete_service, get_service, get_services, get_my_services, get_nb_services
+from data.users import create_user, update_user, delete_user, get_users, get_user, login, get_nb_user, get_nb_presta
 from data.etapes import create_etape, update_etape, delete_etape, get_etape
 
 app = Flask(__name__)
@@ -53,6 +53,12 @@ app.add_url_rule('/update_etape/<id>', view_func=update_etape, methods=['PUT'])
 app.add_url_rule('/delete_etape/<id>', view_func=delete_etape, methods=['DELETE'])
 
 app.add_url_rule('/get_etape/<id_demandeur>', view_func=get_etape, methods=['GET'])
+
+app.add_url_rule('/get_nb_user', view_func=get_nb_user, methods=['GET'])
+
+app.add_url_rule('/get_nb_presta', view_func=get_nb_presta, methods=['GET'])
+
+app.add_url_rule('/get_nb_services', view_func=get_nb_services, methods=['GET'])
 
 def handle_signal(*args, **kwargs):
     sys.exit(0)
