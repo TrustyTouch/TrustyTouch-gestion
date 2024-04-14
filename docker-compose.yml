@@ -1,4 +1,18 @@
 services:
+  db_auth:
+    container_name: postgres_db_auth
+    restart: unless-stopped
+    image: postgres:14
+    ports: 
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes: 
+      - "./docker/init_auth:/docker-entrypoint-initdb.d:ro"
+      - "postgres_db_data_auth:/var/lib/postgresql/data"
+
   db:
     container_name: postgres_db
     restart: unless-stopped
@@ -21,12 +35,11 @@ services:
       - "5000:5000"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/dbname
-      - FLASK_DEBUG=1
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
 volumes:
   postgres_db_data:
+    external: true
+  postgres_db_data_auth:
     external: true
