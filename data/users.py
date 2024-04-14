@@ -125,12 +125,12 @@ def login():
     mot_de_passe = data.get('mot_de_passe')
 
     cur = conn_auth.cursor()
-    cur.execute("SELECT * FROM utilisateurs WHERE email = %s", (email,))
+    cur.execute("SELECT id, mot_de_passe, id_roles FROM utilisateurs WHERE email = %s", (email,))
     utilisateur = cur.fetchone()
     cur.close()
 
     if utilisateur:
-        id, _, mdp, roles = utilisateur
+        id, mdp, roles = utilisateur
 
         # Calculer le hachage SHA-256 du mot de passe fourni
         mdp_input = hashlib.sha256(mot_de_passe.encode('utf-8')).hexdigest()
