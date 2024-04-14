@@ -8,6 +8,34 @@ import hashlib
 
 from . import db
 
+@jwt_required()
+@cross_origin()
+def get_nb_user():
+    conn = db.getconn()
+
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(id) FROM utilisateurs")
+        count = cur.fetchone()
+        cur.close()
+        return jsonify({"nb_utilisateurs": count}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@jwt_required()
+@cross_origin()
+def get_nb_presta():
+    conn_auth = db.getconn_auth()
+
+    try:
+        cur = conn_auth.cursor()
+        cur.execute("SELECT COUNT(id) FROM utilisateurs WHERE id_roles=2")
+        count = cur.fetchone()
+        cur.close()
+        return jsonify({"nb_prestataires": count}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # Route pour créer un nouvel utilisateur
 @cross_origin()
 def create_user():

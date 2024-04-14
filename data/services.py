@@ -5,6 +5,20 @@ from flask_cors import cross_origin
 
 from . import db
 
+@jwt_required()
+@cross_origin()
+def get_nb_services():
+    conn = db.getconn()
+
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(id) FROM services")
+        count = cur.fetchone()
+        cur.close()
+        return jsonify({"nb_services": count}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # Route pour la création de service proposé par un prestataire par l'ID
 @jwt_required()
 @cross_origin()
