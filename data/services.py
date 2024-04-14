@@ -117,7 +117,7 @@ def get_my_services():
     # Récupérer les données du service depuis la base de données
     try:
         cur = conn.cursor()
-        cur.execute("SELECT s.id, s.titre, s.id_categorie, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) WHERE u.nom = %s", (get_jwt_identity(),))
+        cur.execute("SELECT s.id, s.titre, s.id_categorie, u.nom FROM services s JOIN utilisateurs u ON (s.id_createur = u.id) WHERE u.id = %s", (get_jwt_identity(),))
         services = cur.fetchall()
         cur.close()
         if services:

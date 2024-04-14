@@ -15,6 +15,7 @@ def create_user():
     conn = db.getconn()
     data = request.json
     nom = data.get('nom')
+    email = data.get('email')
     hashed_password = data.get('mot_de_passe')
     id_roles = data.get('id_roles')
     code_parainage = data.get('code_parainage')
@@ -22,7 +23,7 @@ def create_user():
     try:
         cur = conn_auth.cursor()
         hashed_password = hashlib.sha256(data['mot_de_passe'].encode('utf-8')).hexdigest()
-        cur.execute("INSERT INTO utilisateurs (nom, mot_de_passe, id_roles) VALUES (%s, %s, %s) RETURNING id", (nom, hashed_password, id_roles))
+        cur.execute("INSERT INTO utilisateurs (email, mot_de_passe, id_roles) VALUES (%s, %s, %s) RETURNING id", (email, hashed_password, id_roles))
         id = cur.fetchone()[0]
         conn_auth.commit()
         cur.close()
@@ -120,17 +121,16 @@ def get_users():
 def login():
     conn_auth = db.getconn_auth()
     data = request.get_json()
-    nom = data.get('nom')
+    email = data.get('email')
     mot_de_passe = data.get('mot_de_passe')
 
     cur = conn_auth.cursor()
-    cur.execute("SELECT * FROM utilisateurs WHERE nom = %s", (nom,))
+    cur.execute("SELECT * FROM utilisateurs WHERE email = %s", (email,))
     utilisateur = cur.fetchone()
     cur.close()
 
     if utilisateur:
-        # Récupérer le hachage du mot de passe depuis la base de données
-        id, nom, mdp, roles = utilisateur
+        id, _, mdp, roles = utilisateur
 
         # Calculer le hachage SHA-256 du mot de passe fourni
         mdp_input = hashlib.sha256(mot_de_passe.encode('utf-8')).hexdigest()

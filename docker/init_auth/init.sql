@@ -10,7 +10,7 @@ INSERT INTO roles (nom_role) VALUES
 
 CREATE TABLE utilisateurs (
     id serial PRIMARY KEY,
-    nom VARCHAR(50),
+    email TEXT,
     mot_de_passe VARCHAR(255),
     id_roles INT REFERENCES roles(id) -- Référence à l'ID du rôle de l'utilisateur
 );
