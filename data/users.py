@@ -44,24 +44,34 @@ def create_user():
     data = request.json
     nom = data.get('nom')
     email = data.get('email')
-    hashed_password = data.get('mot_de_passe')
+    hashed_password = hashlib.sha256(data.get('mot_de_passe').encode('utf-8')).hexdigest()
     id_roles = data.get('id_roles')
     code_parainage = data.get('code_parainage')
     
     try:
+        # Vérifier si l'e-mail existe déjà dans la base de données
         cur = conn_auth.cursor()
-        hashed_password = hashlib.sha256(data['mot_de_passe'].encode('utf-8')).hexdigest()
+        cur.execute("SELECT email FROM utilisateurs WHERE email = %s", (email,))
+        existing_email = cur.fetchone()
+        cur.close()
+        if existing_email:
+            return jsonify({'message': 'L\'adresse e-mail existe déjà'}), 400
+
+        # Insérer l'utilisateur dans la base de données des utilisateurs authentifiés
+        cur = conn_auth.cursor()
         cur.execute("INSERT INTO utilisateurs (email, mot_de_passe, id_roles) VALUES (%s, %s, %s) RETURNING id", (email, hashed_password, id_roles))
         id = cur.fetchone()[0]
         conn_auth.commit()
         cur.close()
         
+        # Insérer l'utilisateur dans la base de données principale
         cur = conn.cursor()
         cur.execute("INSERT INTO utilisateurs (id, nom, code_parainage) VALUES (%s, %s, %s)", (id, nom, code_parainage))
         conn.commit()
         cur.close()
-        
+
         return jsonify({'id': id, 'nom': nom, 'code_parainage': code_parainage}), 201
+
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
@@ -156,7 +166,7 @@ def login():
     cur.execute("SELECT id, mot_de_passe, id_roles FROM utilisateurs WHERE email = %s", (email,))
     utilisateur = cur.fetchone()
     cur.close()
-
+    
     if utilisateur:
         id, mdp, roles = utilisateur
 
