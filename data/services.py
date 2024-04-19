@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from datetime import timedelta, datetime
 
 from flask_cors import cross_origin
 
@@ -9,13 +10,23 @@ from . import db
 @cross_origin()
 def get_nb_services():
     conn = db.getconn()
+    date_reference = datetime.now().date() - timedelta(days=7)
 
     try:
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(id) FROM services")
-        count = cur.fetchone()
+        cur.execute("SELECT COUNT(id), date_crea FROM services WHERE date_crea >= %s GROUP BY date_crea", (date_reference,))
+        count_by_date = cur.fetchall()
         cur.close()
-        return jsonify({"nb_services": count}), 200
+
+        results = []
+
+        for count, date in count_by_date:
+            results.append({
+                "count": count,
+                "date": date
+            })
+
+        return jsonify({"nb_services": results}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
