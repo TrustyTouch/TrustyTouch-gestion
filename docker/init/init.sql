@@ -30,7 +30,8 @@ CREATE TABLE services (
     id_categorie INT,
     FOREIGN KEY (id_categorie) REFERENCES categories(id),
     prix DECIMAL(10, 2),
-    images TEXT
+    images TEXT,
+    date_crea DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE notations (
