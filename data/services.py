@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from datetime import timedelta, datetime
+import requests
 
 from flask_cors import cross_origin
 
@@ -51,7 +52,18 @@ def create_service():
         id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        return jsonify({'id': id, 'titre': titre, 'description': description, 'id_createur': id_createur, 'id_categorie': id_categorie, 'prix': prix, 'images': images}), 201
+        # Envoyer une notification via le microservice de notification
+        notification_payload = {
+            "user_id": id_createur,
+            "message": f"Votre service '{titre}' a été créé avec succès."
+        }
+        response = requests.post('http://localhost:5001/notify', json=notification_payload)
+        
+        if response.status_code == 200:
+            return jsonify({'id': id, 'titre': titre, 'description': description, 'id_createur': id_createur, 'id_categorie': id_categorie, 'prix': prix, 'images': images, 'notification': 'sent'}), 201
+        else:
+            return jsonify({'id': id, 'titre': titre, 'description': description, 'id_createur': id_createur, 'id_categorie': id_categorie, 'prix': prix, 'images': images, 'notification': 'failed'}), 201
+     
     except Exception as e:
         conn.rollback()
         return jsonify({'error': str(e)}), 500
