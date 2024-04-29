@@ -57,7 +57,7 @@ def create_service():
             "user_id": id_createur,
             "message": f"Votre service '{titre}' a été créé avec succès."
         }
-        response = requests.post('http://localhost:5001/notify', json=notification_payload)
+        response = requests.post('http://host.docker.internal:5001/notify', json=notification_payload)
         
         if response.status_code == 200:
             return jsonify({'id': id, 'titre': titre, 'description': description, 'id_createur': id_createur, 'id_categorie': id_categorie, 'prix': prix, 'images': images, 'notification': 'sent'}), 201
